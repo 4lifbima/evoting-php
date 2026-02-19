@@ -2,6 +2,7 @@
 require_once '../includes/config.php';
 require_once '../includes/functions.php';
 require_once '../includes/auth.php';
+require_once '../includes/admin_layout.php';
 
 // Require admin login
 requireAdmin();
@@ -17,59 +18,13 @@ $candidates_result = mysqli_query($conn, $query);
 ?>
 <!DOCTYPE html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kelola Kandidat - E-Voting</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
-</head>
-<body class="bg-gray-100">
+<?= renderAdminHead('Kelola Kandidat - E-Voting', '<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>') ?>
+<body class="bg-slate-50">
     <div class="flex h-screen overflow-hidden">
-        <!-- Sidebar -->
-        <div class="w-64 bg-indigo-800 text-white flex-shrink-0 hidden md:block">
-            <div class="p-6">
-                <h1 class="text-2xl font-bold flex items-center">
-                    <i class="fas fa-vote-yea mr-2"></i>
-                    Admin Panel
-                </h1>
-                <p class="text-sm text-indigo-200 mt-1"><?= htmlspecialchars($_SESSION['admin_nama']) ?></p>
-            </div>
-
-            <nav class="mt-6">
-                <a href="index.php" class="block py-3 px-6 hover:bg-indigo-700 transition border-l-4 border-transparent">
-                    <i class="fas fa-tachometer-alt mr-2"></i> Dashboard
-                </a>
-                <a href="candidates.php" class="block py-3 px-6 bg-indigo-900 hover:bg-indigo-700 transition border-l-4 border-white">
-                    <i class="fas fa-users mr-2"></i> Kelola Kandidat
-                </a>
-                <a href="voters.php" class="block py-3 px-6 hover:bg-indigo-700 transition border-l-4 border-transparent">
-                    <i class="fas fa-user-check mr-2"></i> Data Pemilih
-                </a>
-                <a href="results.php" class="block py-3 px-6 hover:bg-indigo-700 transition border-l-4 border-transparent">
-                    <i class="fas fa-chart-bar mr-2"></i> Hasil Voting
-                </a>
-                <a href="sessions.php" class="block py-3 px-6 hover:bg-indigo-700 transition border-l-4 border-transparent">
-                    <i class="fas fa-clock mr-2"></i> Sesi Voting
-                </a>
-                <a href="../logout.php" class="block py-3 px-6 hover:bg-red-700 transition border-l-4 border-transparent mt-10">
-                    <i class="fas fa-sign-out-alt mr-2"></i> Logout
-                </a>
-            </nav>
-        </div>
+        <?= renderAdminSidebar('candidates', $_SESSION['admin_nama'] ?? 'Administrator') ?>
 
         <!-- Main Content -->
         <div class="flex-1 overflow-y-auto">
-            <!-- Topbar (Mobile) -->
-            <div class="md:hidden bg-indigo-800 text-white p-4 flex justify-between items-center">
-                <h1 class="text-xl font-bold"><i class="fas fa-vote-yea mr-2"></i>Admin Panel</h1>
-                <a href="../logout.php" class="text-white hover:text-red-200">
-                    <i class="fas fa-sign-out-alt text-xl"></i>
-                </a>
-            </div>
-
             <div class="p-8">
                 <!-- Flash Message -->
                 <?php $flash = get_flash_message(); if ($flash): ?>

@@ -26,6 +26,9 @@ $voter_info = getVoterById($conn, $voter_id);
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <!-- Font Awesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -38,6 +41,21 @@ $voter_info = getVoterById($conn, $voter_id);
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
+        :root {
+            --primary: #5442f5;
+            --primary-hover: #4635dc;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #f8fafc;
+            color: var(--text-main);
+        }
+
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
@@ -45,26 +63,57 @@ $voter_info = getVoterById($conn, $voter_id);
         .animate-pulse-slow {
             animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
+        .surface-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            border: 1px solid var(--primary);
+        }
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+        .btn-soft {
+            background: #eef2ff;
+            color: var(--primary);
+            border: 1px solid #dbe4ff;
+        }
+        .btn-soft:hover {
+            background: #e3e9ff;
+        }
+        .primary-block {
+            background: var(--primary);
+            color: #fff;
+        }
         .vote-btn:disabled {
             opacity: 0.5;
             cursor: not-allowed;
         }
         .candidate-card {
-            transition: all 0.3s ease;
+            transition: all 0.25s ease;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            overflow: hidden;
+            background: #fff;
         }
         .candidate-card:hover {
-            transform: translateY(-5px);
+            transform: translateY(-3px);
+            box-shadow: 0 14px 28px rgba(15, 23, 42, 0.08);
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen">
+<body class="min-h-screen">
 
     <!-- Navbar -->
-    <nav class="bg-white shadow-lg sticky top-0 z-50">
+    <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center">
-                    <i class="fas fa-vote-yea text-blue-600 text-2xl mr-3"></i>
+                    <i class="fas fa-vote-yea text-2xl mr-3" style="color:#5442f5;"></i>
                     <span class="font-bold text-xl text-gray-800">E-Voting System</span>
                 </div>
                 <div class="flex items-center space-x-4">
@@ -77,7 +126,7 @@ $voter_info = getVoterById($conn, $voter_id);
                         <i class="far fa-clock mr-1"></i>
                         <span id="live-time"></span>
                     </span>
-                    <a href="login.php" class="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium transition">
+                    <a href="login.php" class="btn-soft px-4 py-2 rounded-lg text-sm font-medium transition">
                         <i class="fas fa-lock mr-1"></i> Admin
                     </a>
                 </div>
@@ -90,21 +139,21 @@ $voter_info = getVoterById($conn, $voter_id);
 
         <!-- Flash Message -->
         <?php $flash = get_flash_message(); if ($flash): ?>
-        <div class="bg-<?= $flash['type'] === 'success' ? 'green' : 'red' ?>-100 border border-<?= $flash['type'] === 'success' ? 'green' : 'red' ?>-400 text-<?= $flash['type'] === 'success' ? 'green' : 'red' ?>-700 px-4 py-3 rounded mb-6">
+        <div class="surface-card px-4 py-3 mb-6 text-<?= $flash['type'] === 'success' ? 'green' : 'red' ?>-700">
             <?= htmlspecialchars($flash['message']) ?>
         </div>
         <?php endif; ?>
 
         <!-- Voting Status Alert -->
         <?php if (!$voting_active): ?>
-        <div class="bg-yellow-100 border border-yellow-400 text-yellow-700 px-4 py-3 rounded mb-6">
+        <div class="surface-card text-yellow-700 px-4 py-3 mb-6">
             <i class="fas fa-exclamation-triangle mr-2"></i>
             Voting is currently not active. Please check the voting schedule.
         </div>
         <?php endif; ?>
 
         <?php if ($already_voted): ?>
-        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-6">
+        <div class="surface-card text-green-700 px-4 py-3 mb-6">
             <i class="fas fa-check-circle mr-2"></i>
             You have already voted. Thank you for participating!
         </div>
@@ -112,17 +161,17 @@ $voter_info = getVoterById($conn, $voter_id);
 
         <!-- Info Sesi Voting -->
         <?php if ($sesi_aktif): ?>
-        <div class="bg-blue-600 text-white rounded-lg shadow-lg p-4 mb-8 flex flex-wrap items-center justify-between">
+        <div class="primary-block rounded-2xl p-4 mb-8 flex flex-wrap items-center justify-between">
             <div class="flex items-center">
                 <i class="fas fa-info-circle text-2xl mr-3"></i>
                 <div>
                     <h3 class="font-bold"><?= htmlspecialchars($sesi_aktif['nama_sesi']) ?></h3>
-                    <p class="text-sm text-blue-100">
+                    <p class="text-sm text-indigo-100">
                         <i class="far fa-calendar mr-1"></i> <?= tgl_indo($sesi_aktif['tanggal_mulai']) ?> - <?= tgl_indo($sesi_aktif['tanggal_selesai']) ?>
                     </p>
                 </div>
             </div>
-            <div class="bg-blue-700 px-4 py-2 rounded-lg">
+            <div class="bg-white/15 px-4 py-2 rounded-lg">
                 <i class="fas fa-hourglass-half mr-1"></i>
                 <span id="countdown-timer">Loading...</span>
             </div>
@@ -130,10 +179,10 @@ $voter_info = getVoterById($conn, $voter_id);
         <?php endif; ?>
 
         <!-- Status Partisipasi -->
-        <div class="bg-white rounded-lg shadow-md p-6 mb-8">
+        <div class="surface-card p-6 mb-8">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="text-center">
-                    <div class="text-4xl font-bold text-blue-600" id="total-voters">0</div>
+                    <div class="text-4xl font-bold" style="color:#5442f5;" id="total-voters">0</div>
                     <div class="text-sm text-gray-600 mt-1"><i class="fas fa-users mr-1"></i>Total Pemilih</div>
                 </div>
                 <div class="text-center">
@@ -146,14 +195,15 @@ $voter_info = getVoterById($conn, $voter_id);
                 </div>
             </div>
             <div class="mt-4 w-full bg-gray-200 rounded-full h-4">
-                <div class="bg-gradient-to-r from-blue-500 to-purple-600 h-4 rounded-full transition-all duration-500"
-                     id="progress-bar" style="width: 0%"></div>
+                <div class="h-4 rounded-full transition-all duration-500"
+                     style="background:#5442f5; width:0%;"
+                     id="progress-bar"></div>
             </div>
         </div>
 
         <!-- Daftar Kandidat -->
         <h2 class="text-2xl font-bold text-gray-800 mb-6">
-            <i class="fas fa-users text-blue-600 mr-2"></i>
+            <i class="fas fa-users mr-2" style="color:#5442f5;"></i>
             Pilih Kandidat Favorit Anda
         </h2>
 
@@ -169,12 +219,12 @@ $voter_info = getVoterById($conn, $voter_id);
 
         <!-- Hasil Voting Real-time -->
         <h2 class="text-2xl font-bold text-gray-800 mb-6">
-            <i class="fas fa-chart-bar text-green-600 mr-2"></i>
+            <i class="fas fa-chart-bar mr-2" style="color:#5442f5;"></i>
             Hasil Voting Real-time
             <span class="text-sm font-normal text-gray-500 ml-2" id="last-update"></span>
         </h2>
 
-        <div class="bg-white rounded-lg shadow-lg p-6">
+        <div class="surface-card p-6">
             <div id="results-container" class="space-y-6">
                 <!-- Akan diisi oleh jQuery -->
                 <div class="text-center py-8">
@@ -263,11 +313,11 @@ $voter_info = getVoterById($conn, $voter_id);
                 const btnText = alreadyVoted ? 'Sudah Memilih' : (!votingActive ? 'Voting Tutup' : 'Pilih Kandidat Ini');
                 const btnClass = alreadyVoted || !votingActive 
                     ? 'bg-gray-400 cursor-not-allowed' 
-                    : 'bg-blue-600 hover:bg-blue-700';
+                    : 'btn-primary';
                 
                 html += `
-                    <div class="candidate-card bg-white rounded-lg shadow-lg overflow-hidden">
-                        <div class="h-48 bg-gradient-to-r from-blue-500 to-indigo-600 flex items-center justify-center text-white text-6xl font-bold">
+                    <div class="candidate-card">
+                        <div class="h-48 primary-block flex items-center justify-center text-white text-6xl font-bold">
                             ${candidate.no_urut}
                         </div>
                         <div class="p-6">
@@ -304,7 +354,7 @@ $voter_info = getVoterById($conn, $voter_id);
             let html = '';
             results.forEach((candidate, index) => {
                 const isLeader = index === 0 && candidate.jumlah_suara > 0;
-                const barColor = isLeader ? 'bg-yellow-500' : 'bg-blue-600';
+                const barColor = isLeader ? '#3726dc' : '#5442f5';
                 
                 html += `
                     <div>
@@ -318,8 +368,8 @@ $voter_info = getVoterById($conn, $voter_id);
                             </span>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-4 mb-4">
-                            <div class="${barColor} h-4 rounded-full transition-all duration-500"
-                                 style="width: ${candidate.persentase}%"></div>
+                            <div class="h-4 rounded-full transition-all duration-500"
+                                 style="background: ${barColor}; width: ${candidate.persentase}%"></div>
                         </div>
                     </div>
                 `;
@@ -347,7 +397,7 @@ $voter_info = getVoterById($conn, $voter_id);
                 text: 'Yakin ingin memilih kandidat ini? Tindakan ini tidak dapat dibatalkan!',
                 icon: 'question',
                 showCancelButton: true,
-                confirmButtonColor: '#3085d6',
+                confirmButtonColor: '#5442f5',
                 cancelButtonColor: '#d33',
                 confirmButtonText: 'Ya, Pilih!',
                 cancelButtonText: 'Batal'
