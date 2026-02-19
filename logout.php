@@ -1,32 +1,43 @@
 <?php
-/**
- * Logout Handler
- * E-Voting System
- */
-
 require_once 'includes/config.php';
 require_once 'includes/auth.php';
 
-// Get logout reason (optional)
+
 $reason = isset($_GET['reason']) ? $_GET['reason'] : '';
+$silent = isset($_GET['silent']) && $_GET['silent'] === '1';
+$next = isset($_GET['next']) ? trim($_GET['next']) : '';
 
-// Destroy voter session if exists
 logoutVoter();
-
-// Destroy admin session if exists  
+ 
 logoutAdmin();
 
-// Determine redirect based on reason
 if ($reason === 'vote-complete') {
-    // Show thank you message for voters who just voted
     $message = 'Terima kasih telah berpartisipasi dalam voting!';
 } else {
     $message = 'Anda telah logout.';
 }
 
-// Set flash message and redirect to login
 $_SESSION['flash_message'] = $message;
 $_SESSION['flash_type'] = 'success';
+
+if ($silent) {
+    $scriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'] ?? '/'));
+    $projectBasePath = rtrim($scriptDir, '/');
+    if ($projectBasePath === '') {
+        $projectBasePath = '/';
+    }
+
+    if ($next === '' || $next === '/') {
+        $next = $projectBasePath . '/';
+    }
+
+    if (strpos($next, '/') !== 0 || strpos($next, '//') === 0) {
+        $next = $projectBasePath . '/';
+    }
+
+    header('Location: ' . $next);
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="id">

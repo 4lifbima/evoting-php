@@ -10,16 +10,20 @@ if (isAdminLoggedIn()) {
 
 $error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = mysqli_real_escape_string($conn, $_POST['username']);
-    $password = $_POST['password'];
-    
-    $result = loginAdmin($conn, $username, $password);
-    
-    if ($result['success']) {
-        header('Location: admin/index.php');
-        exit;
+    $email = trim($_POST['email'] ?? '');
+    $password = $_POST['password'] ?? '';
+
+    if ($email === '' || $password === '') {
+        $error = 'Email dan password wajib diisi.';
     } else {
-        $error = $result['message'];
+        $result = loginAdmin($conn, $email, $password);
+    
+        if ($result['success']) {
+            header('Location: admin/index.php');
+            exit;
+        } else {
+            $error = $result['message'];
+        }
     }
 }
 ?>
@@ -79,12 +83,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <form method="POST" action="">
             <div class="mb-6">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="username">
-                    <i class="fas fa-user mr-1"></i> Username
+                <label class="block text-gray-700 text-sm font-bold mb-2" for="email">
+                    <i class="fas fa-envelope mr-1"></i> Email
                 </label>
-                <input type="text" name="username" id="username" required autofocus
+                <input type="email" name="email" id="email" required autofocus
                        class="w-full px-4 py-2 border rounded-lg focus:outline-none focus-primary"
-                       placeholder="Masukkan username">
+                       placeholder="Masukkan email admin">
             </div>
 
             <div class="mb-6">
@@ -109,7 +113,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <div class="mt-6 pt-6 border-t text-center text-xs text-gray-500">
-            <p>Demo Credentials: <strong>admin</strong> / <strong>admin123</strong></p>
+            <p>Demo Credentials: <strong>admin@voting.com</strong> / <strong>admin123</strong></p>
         </div>
     </div>
 </body>

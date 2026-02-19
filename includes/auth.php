@@ -36,7 +36,7 @@ function getCurrentAdmin() {
     
     return [
         'id' => $_SESSION['admin_id'] ?? null,
-        'username' => $_SESSION['admin_username'] ?? null,
+        'email' => $_SESSION['admin_email'] ?? null,
         'nama' => $_SESSION['admin_nama'] ?? null,
         'role' => $_SESSION['admin_role'] ?? null
     ];
@@ -45,11 +45,18 @@ function getCurrentAdmin() {
 /**
  * Login admin user
  */
-function loginAdmin($conn, $username, $password) {
-    $username = mysqli_real_escape_string($conn, $username);
+function loginAdmin($conn, $email, $password) {
+    $email = trim((string)$email);
+    $password = (string)$password;
+
+    if ($email === '' || $password === '') {
+        return ['success' => false, 'message' => 'Email or password is incorrect'];
+    }
+
+    $email = mysqli_real_escape_string($conn, $email);
     $password = md5($password); // Note: Use password_hash() in production!
     
-    $query = "SELECT * FROM users WHERE username = '$username' AND password = '$password'";
+    $query = "SELECT * FROM users WHERE email = '$email' AND password = '$password'";
     $result = mysqli_query($conn, $query);
     
     if (mysqli_num_rows($result) == 1) {
@@ -58,7 +65,7 @@ function loginAdmin($conn, $username, $password) {
         // Set session
         $_SESSION['admin_logged_in'] = true;
         $_SESSION['admin_id'] = $user['id'];
-        $_SESSION['admin_username'] = $user['username'];
+        $_SESSION['admin_email'] = $user['email'];
         $_SESSION['admin_nama'] = $user['nama_lengkap'];
         $_SESSION['admin_role'] = $user['role'];
         
@@ -68,7 +75,7 @@ function loginAdmin($conn, $username, $password) {
         return ['success' => true, 'user' => $user];
     }
     
-    return ['success' => false, 'message' => 'Username or password is incorrect'];
+    return ['success' => false, 'message' => 'Email or password is incorrect'];
 }
 
 /**

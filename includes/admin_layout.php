@@ -26,6 +26,7 @@ if (!function_exists('renderAdminHead')) {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
     <style>
         :root {
@@ -168,7 +169,7 @@ if (!function_exists('renderAdminSidebar')) {
     </nav>
 
     <div class="px-4 pb-5">
-        <a href="../logout.php" class="admin-nav-link">
+        <a href="#" class="admin-nav-link js-admin-logout">
             <iconify-icon icon="solar:logout-3-bold-duotone" width="20"></iconify-icon>
             <span>Logout</span>
         </a>
@@ -180,10 +181,32 @@ if (!function_exists('renderAdminSidebar')) {
         <iconify-icon icon="solar:shield-check-bold-duotone" width="20" class="admin-brand-icon"></iconify-icon>
         <h1 class="font-bold">Admin Dashboard</h1>
     </div>
-    <a href="../logout.php" class="text-slate-600 hover:text-slate-900">
+    <a href="#" class="text-slate-600 hover:text-slate-900 js-admin-logout">
         <iconify-icon icon="solar:logout-3-bold-duotone" width="22"></iconify-icon>
     </a>
 </div>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.js-admin-logout').forEach(function(el) {
+        el.addEventListener('click', function(e) {
+            e.preventDefault();
+            Swal.fire({
+                title: 'Keluar dari admin?',
+                text: 'Sesi admin akan diakhiri.',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Ya, Keluar',
+                cancelButtonText: 'Batal',
+                confirmButtonColor: '#5442f5'
+            }).then(function(result) {
+                if (result.isConfirmed) {
+                    window.location.href = '../logout.php?silent=1';
+                }
+            });
+        });
+    });
+});
+</script>
 HTML;
     }
 }
