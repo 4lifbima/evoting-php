@@ -1,0 +1,39 @@
+# E-Voting PHP - Git Ignore File
+
+# Dependencies
+/vendor/
+/node_modules/
+
+# Uploaded files
+/uploads/*
+!/uploads/.gitkeep
+
+# Environment and config
+.env
+.env.local
+config.local.php
+
+# IDE and Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+logs/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Database backups (optional - uncomment if needed)
+# *.sql
+# backups/
